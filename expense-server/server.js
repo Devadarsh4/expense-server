@@ -1,24 +1,21 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./src/rules/authRoutes');
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 
-// MongoDB Connection
 mongoose
-    .connect('mongodb://127.0.0.1:27017/expense_app')
+    .connect(process.env.MONGO_DB_CONNECTION_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch((error) =>
-        console.log('Error Connecting to Database:', error.message)
+        console.log('Error Connecting to Database:', error)
     );
 
-// Routes
 app.use('/auth', authRoutes);
 
-// Server
 app.listen(5001, () => {
     console.log('Server is running on port 5001');
 });

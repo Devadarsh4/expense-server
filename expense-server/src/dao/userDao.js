@@ -1,4 +1,4 @@
-const User = require('../model/user');
+const User = require('../model/User');
 
 const userDao = {
     findByEmail: async(email) => {
@@ -11,14 +11,11 @@ const userDao = {
             return await newUser.save();
         } catch (error) {
             if (error.code === 11000) {
-                const err = new Error();
+                const err = new Error('User already exists');
                 err.code = 'USER_EXIST';
                 throw err;
-            } else {
-                const err = new Error('DB Error');
-                err.code = 'INTERNAL_SERVER_ERROR';
-                throw err;
             }
+            throw error;
         }
     }
 };
