@@ -25,7 +25,8 @@ const authController = {
             const isPasswordMatched = await bcrypt.compare(
                 password,
                 user.password
-            )
+            );
+
             if (!isPasswordMatched) {
                 return response.status(401).json({
                     message: 'Invalid email or password'
