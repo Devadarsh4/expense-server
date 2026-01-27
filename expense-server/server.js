@@ -1,21 +1,24 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const authRoutes = require('./src/rules/authRoutes');
+// require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const authRoutes = require("./src/routes/authRoutes");
+const groupRoutes = require("./src/routes/groupRoutes");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
-mongoose
-    .connect(process.env.MONGO_DB_CONNECTION_URI)
-    .then(() => console.log('MongoDB Connected'))
-    .catch((error) =>
-        console.log('Error Connecting to Database:', error)
-    );
+app.use("/auth", authRoutes);
+app.use("/groups", groupRoutes);
 
-app.use('/auth', authRoutes);
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.log(err));
 
 app.listen(5001, () => {
-    console.log('Server is running on port 5001');
+    console.log("Server running on port 5001");
 });
