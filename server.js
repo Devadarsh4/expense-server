@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./src/routes/authRoutes");
 const groupRoutes = require("./src/routes/groupRoutes");
+const rbacRoutes = require('./src/routes/rbacRoutes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 /* ================= ROUTES ================= */
 app.use("/auth", authRoutes);
 app.use("/groups", groupRoutes);
+app.use('/users', rbacRoutes);
 
 /* ================= DATABASE ================= */
 mongoose
