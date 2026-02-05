@@ -1,47 +1,46 @@
-const generateTemporaryPassword = () => {
+const User = require("../model/users");
 
-    const char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-
-    let result = '';
-
-    for (let i = 0; i < descriedLength; i++) {
-        result += char.charAt(Math.floor(Math.random() * char.length));
-    }
-
-    return result;
-};
 const rbacDao = {
-    create: async(userData) {
+
+    // CREATE USER (DB only)
+    create: async(email, name, role, password, adminId) => {
+
+        // Prevent duplicate user
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            throw new Error("User already exists");
+        }
+
         const user = await User.create({
-            email: email,
-            password: generateTemporaryPassword(6),
-            name: name,
-            role: role,
-            adminId: adminIdId
+            email,
+            password, // already hashed
+            name,
+            role,
+            adminId
         });
+
+        // Hide password before returning
+        user.password = undefined;
+
+        return user;
     },
 
-
-    update: async(getGroupByEmail, updateData) => {
-
+    // UPDATE USER
+    update: async(userId, name, role) => {
         return await User.findByIdAndUpdate(
-            userId, {
-
-                name,
-                role
-            }, { new: true }
-
-
-        );
+            userId, { name, role }, { new: true, runValidators: true }
+        ).select("-password");
     },
-    delete: async(email) => {
+
+    // DELETE USER
+    delete: async(userId) => {
         return await User.findByIdAndDelete(userId);
     },
 
-    getUserByAdmin: async(adminId) => {
-        return await User.find({ adminId }).select('-password');
-
+    // GET USERS BY ADMIN
+    getUsersByAdminId: async(adminId) => {
+        return await User.find({ adminId }).select("-password");
     }
 };
+
 module.exports = rbacDao;
